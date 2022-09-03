@@ -1,0 +1,87 @@
+.form-control{
+	padding:10px;
+	width:100%;
+}
+.form-group{
+	width:auto;
+}
+.row{
+	margin:0;
+	text-align:center;
+	justify-content:center; 
+}
+#footer{
+	background:#404040;
+	color:#ffffff;
+	margin-bottom:1em;
+	font-size:15px;
+}
+.col-4 a{
+	color:#ffffff;
+}
+.card{
+	 width:75%;
+	justify-content:center;
+	box-shadow:0 16px 32px 0 rgba(0,0,0,0.7);
+	border:5px ridge green;
+	margin:auto;
+	padding:auto;
+	margin:auto;
+}
+.icon{
+position:absolute;
+min-width:50px;
+padding:10px;
+left:90%;
+font-size:22px;
+display:none;
+color:#527a7a;
+}
+.tab_trash{
+   position:absolute;
+   left:17%;
+   top:20%;
+}
+.container-fluid{
+   background-color:#d6d6c2;
+}
+#name{
+  font-size:35px;
+}
+.details{
+  font-size:16px;
+}
+.description{
+   color:#0033cc;
+   font-weight:20pt;
+   font-size:18px;
+}
+.footer_header{
+	font-size:20px;
+	color:orange;
+}
+.fab{
+	cursor:pointer;
+	font-size:30px;
+	padding-right:10px;
+}
+.fa-facebook-f:hover{
+	color:#3B5998;
+}
+.fa-instagram:hover{
+	color:#ffffff;
+	background: #f09433; 
+	background: -moz-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); 
+	background: -webkit-linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); 
+	background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); 
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 );
+}
+.fa-twitter:hover{
+	color:#55ACEE;
+}
+.fa-linkedin:hover{
+	color: #007bb5;
+}
+.fa-whatsapp:hover{
+	color:green;
+}

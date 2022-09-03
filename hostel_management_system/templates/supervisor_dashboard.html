@@ -1,0 +1,517 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+        integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'CSS/After_login_Styles.css' %}" />
+    <title>Supervisor Dashboard</title>
+    <style>
+        input:disabled {
+            cursor: not-allowed;
+        }
+
+        #billcontent .col-sm {
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm navbar-light" id="topnav">
+        <!-- Brand/logo -->
+        <a class="navbar-brand" href="">
+            <img src="" />
+        </a>
+        <a class="navbar-brand" href="">
+            <h1 class="header_text">Student Accommodation Management System</h1>
+        </a>
+        <!-- Links -->
+        <ul class="nav justify-content-end navbar-nav navbar-collapse">
+            <li class="nav-item" id="usrnm">
+                <i class="fas fa-user-graduate"></i>
+                <span id="topname">{{user.first_name}}</span><br>
+                <span id="topmail">{{user.username}}</span>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    <i class="far fa-user-circle"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#" id="dropusrnm">
+                        <i class="far fa-id-card"></i>
+                        <span>{{user.first_name}}</span><br>
+                        <span id="usrmail">{{user.username}}</span>
+                    </a>
+                    <hr id="firsthr">
+                    <a class="dropdown-item" href="/Accounts/changepasswordafterlogin">
+                        <i class="fas fa-lock"></i>
+                        <span>Change Password</span>
+                    </a>
+                    <hr>
+                    <a class="dropdown-item" href="/Accounts/deleteaccount">
+                        <i class="fas fa-user-slash"></i>
+                        <span>Delete Account</span>
+                    </a>
+                    <hr>
+                    <a class="dropdown-item" href="logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Log Out</span>
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    <button type="button" id="sidenavCollapse" class="btn btn-info">
+        <i class="fas fa-align-left"></i>
+    </button>
+    <div class="container-fluid">
+        <nav id="sidenav">
+            <div class="sidenav-header">
+                <h3>{{user.first_name}}</h3>
+            </div>
+            <ul class="sidenav-components">
+                <li class="active">
+                    <a href="#"
+                        onclick="display_content('homecontent','profilecontent','roomcontent','grievancecontent','leavecontent','registrationscontent','billcontent','createbillcontent')">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="#"
+                        onclick="display_content('registrationscontent','homecontent','profilecontent','roomcontent','grievancecontent','leavecontent','billcontent','createbillcontent')">
+                        <i class="fas fa-id-card"></i>
+                        <span>Registrations</span>
+                    </a>
+                    <a href="#"
+                        onclick="display_content('profilecontent','homecontent','roomcontent','grievancecontent','leavecontent','registrationscontent','billcontent','createbillcontent')">
+                        <i class="far fa-id-card"></i>
+                        <span>My Profile</span>
+                    </a>
+                    <a href="#"
+                        onclick="display_content('roomcontent','homecontent','profilecontent','grievancecontent','leavecontent','registrationscontent','billcontent','createbillcontent')">
+                        <i class='fas fa-building'></i>
+                        <span>Room Creation</span>
+                    </a>
+                    <a href="#"
+                        onclick="display_content('createbillcontent','roomcontent','homecontent','profilecontent','grievancecontent','leavecontent','registrationscontent','billcontent')">
+                        <i class='fas fa-building'></i>
+                        <span>Assign Bill</span>
+                    </a>
+                    <a href="#"
+                        onclick="display_content('billcontent','roomcontent','homecontent','profilecontent','grievancecontent','leavecontent','registrationscontent','createbillcontent')">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Bills Section</span>
+                    </a>
+                    <a href="#"
+                        onclick="display_content('grievancecontent','profilecontent','homecontent','roomcontent','leavecontent','registrationscontent','billcontent','createbillcontent')">
+                        <i class='fas fa-calculator'></i>
+                        <span>Grievances</span>
+                    </a>
+                    <a href="#"
+                        onclick="display_content('leavecontent','profilecontent','homecontent','grievancecontent','roomcontent','registrationscontent','billcontent','createbillcontent')">
+                        <i class="far fa-file"></i>
+                        <span>Leave application</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div id="content">
+            {% for msg in messages %}
+            {%if msg is not null%}
+            <div class="alert {{msg.tags}} alert-dismissible center-block fade show" id="alertmessages">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <h6>{{msg}}</h6>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <div id="homecontent" class="container">
+                <h2>Welcome <span>{{user.first_name}}</span></h2>
+                <p>In this Hostel Management System as a Supervisor you can perform different operations.</p>
+                <p>You are responsible for operations like hostel room allocation, leave approval as well as grievances
+                </p>
+                <p>Please be available to interact with students using this application</p>
+            </div>
+            <div id="registrationscontent" class="container"
+                style="display: none;border:1px solid #e6e6e6;border-radius:10px;padding:10px">
+                {% if regstudents|length > 0 %}
+                <table class="table table-bordered table-hover table-striped" style="text-align: center;">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>username</th>
+                            <th>course</th>
+                            <th>year of study</th>
+                            <th>Accept</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in regstudents %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{student.student_mail}}</td>
+                            <td>{{student.course}}</td>
+                            <td>{{student.yos}}</td>
+                            <td><a class="btn btn-success"
+                                    href="/Accounts/acceptuser/{{student.student_mail}}">Accept</a></td>
+                            <td><a class="btn btn-danger"
+                                    href="/Accounts/rejectuser/{{student.student_mail}}">Delete</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <h3 class="text-danger text-justify text-center" style="text-transform: uppercase;">No new registrations
+                </h3>
+                {% endif %}
+            </div>
+            <div id="profilecontent" class="container" style="display: none;">
+                <div class="row" id="userimage">
+                    <i class="far fa-user-circle"></i>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Name
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {{user.first_name}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Email
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {{user.username}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Supervisor Mobile Number
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {{user.mobile_number}}
+                    </div>
+                </div>
+            </div>
+            <div id="roomcontent" class="container" style="display: none;">
+                <form action="/HostelServices/createroom" method="POST">
+                    {% csrf_token %}
+                    <h2>Room Creation</h2><br>
+                    <div class="form-group row">
+                        <div class="col-sm">
+                            <label for="">Hostel ID</label>
+                            <input type="text" class="form-control" value="{{hostel.hostel_id}}" disabled>
+                        </div>
+                        <div class="col-sm">
+                            <label for="">Hostel Name</label>
+                            <input type="text" class="form-control" value="{{hostel.hostel_name}}" disabled>
+                        </div>
+                        <div class="col-sm">
+                            <label for="">Hostel Location</label>
+                            <input type="text" class="form-control" value="{{hostel.location}}" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Floor Number:</label>
+                        <select class="custom-select" name="floorid">
+                            {% for floor in floors %}
+                            <option value="{{floor.floor_id}}" {% if forloop.first %}selected{% endif %}>
+                                {{floor.floor_id}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Room ID</label>
+                        <input type="text" class="form-control" name="roomid" required>
+                    </div>
+                    <div class="form-group">
+                        <label>no. of students per room:</label>
+                        <input type="text" class="form-control" name="capacity" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-primary">Create Room</button>
+                    </div>
+                </form>
+                <h5><a href="#created_rooms" class="text-decoration-none text-secondary text-justify text-uppercase"
+                        id="roomstag" onclick="class_change(this.id)" data-toggle="collapse"><i
+                            class="fas fa-chevron-right"></i> Show Rooms</a></h5>
+                <div class="table-responsive collapse" id="created_rooms">
+                    <table class="table table-bordered table-hover table-striped" style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Floor Number</th>
+                                <th>Room Number</th>
+                                <th>Room Capacity</th>
+                                <th>No of beds occupied currently</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for room in rooms %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{room.floor_id}}</td>
+                                <td>{{room.room_id}}</td>
+                                <td>{{room.capacity}}</td>
+                                <td>{{room.no_of_students_occupied}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="createbillcontent" class="container"
+                style="display: none;border:1px solid #e6e6e6;border-radius:10px;padding:10px">
+                <form action="/HostelServices/assignbill" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <div class="col-sm">
+                            <p class="text-justify text-secondary text-uppercase font-weight-bold">Enter Mess bill</p>
+                            <input type="number" class="form-control" name="mess_bill"
+                                placeholder="Enter mess bill for this month" value="{{hostel.messbill}}">
+                        </div>
+                        <div class="col-sm">
+                            <p class="text-justify text-secondary text-uppercase font-weight-bold">Select Month for Mess
+                                bill</p>
+                            <select name="mess_month" id="" class="custom-select">
+                                <option value="January">January</option>
+                                <option value="February">Feb</option>
+                                <option value="March">March</option>
+                                <option value="April">April</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July">July</option>
+                                <option value="Augutst">Augutst</option>
+                                <option value="September">September</option>
+                                <option value="October">October</option>
+                                <option value="November">November</option>
+                                <option value="December">December</option>
+                            </select>
+                        </div>
+                        <div class="col-sm">
+                            <p class="text-justify text-secondary text-uppercase font-weight-bold">Select Due Date for
+                                above month</p>
+                            <input type="date" class="form-control" name="mess_deadline">
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <button type="submit" class="btn btn-outline-secondary float-right">Assign Bill</button>
+                    </div>
+                </form>
+            </div>
+            <div id="billcontent" class="container"
+                style="display: none;border:1px solid #e6e6e6;border-radius:10px;padding:10px">
+                <div class="form-group" style="width: 100%;">
+                    <h2 style="text-transform:uppercase;color:cadetblue">
+                        <p>Uploaded Bills</p>
+                    </h2>
+                    {% if bills|length > 0 %}
+                    {% for bill in bills %}
+                    {% if forloop.first %}
+                    <hr>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-sm">
+                            <h5 class="text-justify ">Name : <span class="text-secondary">{{bill.name}}</span></h5>
+                        </div>
+                        <div class="col-sm">
+                            <h5 class="text-justify">Email : <span class="text-secondary">{{bill.email}}</span></h5>
+                        </div>
+                        <div class="col-sm">
+                            <h5 class="text-justify">Registered Number : <span
+                                    class="text-secondary">{{bill.regno}}</span></h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <h5 class="text-justify">Room Number : <span class="text-secondary">{{bill.room}}</span>
+                            </h5>
+                        </div>
+                        <div class="col-sm">
+                            <h5 class="text-justify">Floor Number : <span class="text-secondary">{{bill.floor}}</span>
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <h5 class="text-justify">Uploaded Date : <span class="text-secondary">{{bill.adate}}</span>
+                            </h5>
+                        </div>
+                        <div class="col-sm">
+                            <h5 class="text-justify">Paid Date : <span class="text-secondary">{{bill.pdate}}</span></h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <h5 class="text-justify">Transaction Image : </h5>
+                            <img src="/media/{{bill.proof}}" width="400px" height="400px"
+                                style="border: 1px solid gray;border-radius:10px" alt="Transaction Image"
+                                class="rounded">
+                        </div>
+                        <div class="col-sm">
+                            <h5 class="text-justify">Transaction ID : <span class="text-secondary">{{bill.tid}}</span>
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <a href="/HostelServices/accept_bill_payment/{{bill.email}}"
+                                class="btn btn-success">Accept</a>
+                            <a href="/HostelServices/reject_bill_payment/{{bill.email}}"
+                                class="btn btn-danger">Reject</a>
+                        </div>
+                    </div>
+                    {% if forloop.last %}
+                    <hr>
+                    {% endif %}
+                    {% endfor %}
+                    {% else %}
+                    <h3 class="text-danger text-justify text-center" style="text-transform: uppercase;">No Bills
+                        uploaded till date</h3>
+                    {% endif %}
+                </div>
+            </div>
+            <div id="grievancecontent" class="container"
+                style="display: none;border:1px solid #e6e6e6;border-radius:10px;padding:10px">
+                <h2 style="text-transform:uppercase;color:cadetblue">Grievances</h2>
+                {% if grievances|length > 0 %}
+                {% for grievance in grievances %}
+                {% if forloop.first %}
+                <hr>
+                {% endif %}
+                <p class="text-justify">Student {{grievance.name}} with {{grievance.regno}} belonging to
+                    {{grievance.roomid}} has raised the below complaint</p>
+                <p class="text-justify">Complaint:</p>
+                <p class="text-justify">{{grievance.complaint}}</p>
+                {% if not grievance.accepted %}
+                <a href="/HostelServices/acceptgrievance/{{grievance.mail}}" class="btn btn-primary">Accept</a>
+                <a href="/HostelServices/rejectgrievance/{{grievance.mail}}" class="btn btn-danger">Reject</a>
+                {% endif %}
+                <a href="/HostelServices/completegrievance/{{grievance.mail}}" class="btn btn-success">Complete</a>
+                {% if forloop.last %}
+                <hr>
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                <h3 class="text-danger text-justify text-center" style="text-transform: uppercase;">No Grievances till
+                    date</h3>
+                {% endif %}
+            </div>
+            <div id="leavecontent" class="container" style="display: none;">
+                <div class="form-group">
+                    <h2 style="text-transform:uppercase;color:cadetblue">Leave Application</h2>
+                    {% if leaves|length > 0 %}
+                    {% for leave in leaves %}
+                    {% if not leave.accepted %}
+                    {% if forloop.first %}
+                    <hr>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-sm">
+                            <p class="text-justify">Name : {{leave.name}}</p>
+                        </div>
+                        <div class="col-sm">
+                            <p class="text-justify">Registered Number : {{leave.regno}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <p class="text-justify">Email : {{leave.mail}}</p>
+                        </div>
+                        <div class="col-sm">
+                            <p class="text-justify">Room Number : {{leave.roomid}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <p class="text-justify">Parent Mobile Number : {{leave.pnum}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <p class="text-justify">From : {{leave.sdate}}</p>
+                        </div>
+                        <div class="col-sm">
+                            <p class="text-justify">To : {{leave.edate}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <p clas="text-justify">Reason : </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <p class="text-justify">{{leave.reason}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <a href="/HostelServices/acceptleave/{{leave.mail}}" class="btn btn-success">Accept</a>
+                            <a href="/HostelServices/rejectleave/{{leave.mail}}" class="btn btn-danger">Reject</a>
+                        </div>
+                    </div>
+                    {% if forloop.last %}
+                    <hr>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                    {% else %}
+                    <h3 class="text-danger text-justify text-center" style="text-transform: uppercase;">No Leave
+                        Applications till date</h3>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#sidenavCollapse').on('click', function () {
+                $('#sidenav').toggleClass('active');
+            });
+        });
+
+        function class_change(id) {
+            var ele = document.getElementById(id)
+            if (ele.firstElementChild.classList.contains('fa-chevron-right')) {
+                ele.firstElementChild.classList.add('fa-chevron-down')
+                ele.firstElementChild.classList.remove('fa-chevron-right')
+            } else {
+                ele.firstElementChild.classList.remove('fa-chevron-down')
+                ele.firstElementChild.classList.add('fa-chevron-right')
+            }
+        }
+
+        function display_content(a, b, c, d, e, f, g, h) {
+            document.getElementById(a).style.display = "flex"
+            document.getElementById(a).style.flexDirection = "column"
+            document.getElementById(b).style.display = 'none';
+            document.getElementById(c).style.display = 'none';
+            document.getElementById(d).style.display = 'none';
+            document.getElementById(e).style.display = 'none';
+            document.getElementById(f).style.display = 'none';
+            document.getElementById(g).style.display = 'none';
+            document.getElementById(h).style.display = 'none';
+        }
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

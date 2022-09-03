@@ -1,0 +1,645 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+        integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'CSS/After_login_Styles.css' %}" />
+    <title>Student Dashboard</title>
+    <style>
+        input:disabled {
+            cursor: not-allowed;
+        }
+
+        input[type=date] {
+            cursor: pointer;
+        }
+
+        input[type=file] {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm navbar-light" id="topnav">
+        <!-- Brand/logo -->
+        <a class="navbar-brand" href="">
+            <img src="" />
+        </a>
+        <a class="navbar-brand" href="">
+            <h1 class="header_text">Student Accommodation Management System</h1>
+        </a>
+        <!-- Links -->
+        <ul class="nav justify-content-end navbar-nav navbar-collapse">
+            <li class="nav-item" id="usrnm">
+                <i class="fas fa-user-graduate"></i>
+                <span id="topname">{{name}}</span><br>
+                <span id="topmail">{{student.student_mail}}</span>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    <i class="far fa-user-circle"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#" id="dropusrnm">
+                        <i class="far fa-id-card"></i>
+                        <span>{{name}}</span><br>
+                        <span id="usrmail">{{student.student_mail}}</span>
+                    </a>
+                    <hr id="firsthr">
+                    <a class="dropdown-item" href="/Accounts/changepasswordafterlogin">
+                        <i class="fas fa-lock"></i>
+                        <span>Change Password</span>
+                    </a>
+                    <hr>
+                    <a class="dropdown-item" href="/Accounts/deleteaccount">
+                        <i class="fas fa-user-slash"></i>
+                        <span>Delete Account</span>
+                    </a>
+                    <hr>
+                    <a class="dropdown-item" href="/Accounts/logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Log Out</span>
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    <button type="button" id="sidenavCollapse" class="btn btn-info">
+        <i class="fas fa-align-left"></i>
+    </button>
+    <div class="container-fluid">
+        <nav id="sidenav">
+            <div class="sidenav-header">
+                <h3>Student</h3>
+            </div>
+            <ul class="sidenav-components">
+                <li class="active">
+                    <a href="#"
+                        onclick="display_content('homecontent','profilecontent','roomcontent','billcontent','leavecontent','grievancecontent')">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="#"
+                        onclick="display_content('profilecontent','homecontent','roomcontent','leavecontent','grievancecontent','billcontent')">
+                        <i class="far fa-id-card"></i>
+                        <span>My Profile</span>
+                    </a>
+                    <a href="#"
+                        onclick="display_content('roomcontent','homecontent','profilecontent','leavecontent','grievancecontent','billcontent')">
+                        <i class='fas fa-building'></i>
+                        <span>Room Selection</span>
+                    </a>
+                    {% if student.assigned_room != -1 and hostel.month_name != '0' %}
+                    <a href="#"
+                        onclick="display_content('billcontent','profilecontent','homecontent','roomcontent','leavecontent','grievancecontent')">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Bill Payments</span>
+                    </a>
+                    {% endif %}
+                    <a href="#"
+                        onclick="display_content('leavecontent','profilecontent','homecontent','roomcontent','grievancecontent','billcontent')">
+                        <i class="far fa-file"></i>
+                        <span>Leave application</span>
+                    </a>
+                    <a href="#"
+                        onclick="display_content('grievancecontent','profilecontent','homecontent','roomcontent','leavecontent','billcontent')">
+                        <i class='fas fa-calculator'></i>
+                        <span>Grievances</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div id="content">
+            {% for msg in messages %}
+            {%if msg is not null%}
+            <div class="alert {{msg.tags}} alert-dismissible center-block fade show" id="alertmessages">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <h6>{{msg}}</h6>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <div id="homecontent" class="container">
+                <h2>Welcome <span>{{name}}</span></h2>
+                <p>First of all thank you so much for connecting with us</p>
+                <p>We guarantee that we do the best for you </p>
+                <p>Please show some more love on us</p>
+                <div class="form-group">
+                    <h3>
+                        <p><span class="text-danger">Notifications</span></p>
+                    </h3><br>
+                    {% if bills.payment_accepted and bills.payment_paid and not bills.payment_rejected %}
+                    <p class="text-success">Your Bill has been accepted by the supervisor</p>
+                    {% elif not bills.payment_accepted and not bills.payment_rejected and bills.payment_paid %}
+                    <p class="text-warning">Your Bill has been waiting for confirmation from Supervisor</p>
+                    {% elif not payment_accepted and not bills.payment_rejected and not bills.payment_paid %}
+                    {% if deadline_completed %}
+                    <p class="text-danger">You have crossed you deadline please complete and now your
+                        {{hostel.month_name}} month is ({{difference}} * 100) ( fine ) + {{hostel.month_bill}}(
+                        base_bill )</p>
+                    {% elif student.assigned_room != -1 and hostel.month_name != '0' %}
+                    <p class="text-info">New Bill has been assigned for the month {{hostel.month_name}} please pay the
+                        bill and upload the ScreenShot before {{hostel.month_deadline}}</p>
+                    <p class="text-info">Bill Amount for {{hostel.month_name}} is {{hostel.month_bill}}</p>
+                    {% else %}
+                    <p class="text-info">Your Notifications will be displayed here</p>
+                    {% endif %}
+                    {% elif not payment_accepted and bills.payment_rejected and bills.payment_paid %}
+                    <p class="text-danger">You bill has been rejected by the supervisor, please contact your supervisor
+                    </p>
+                    {% endif %}
+                    {% if fines|length > 0 %}
+                    <h5>
+                        <p class="text-danger text-justify text-uppercase">Your Previous Fines are</p>
+                    </h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Due Month</th>
+                                    <th>Total Amount ( Including Fines till date )</th>
+                                    <th>Due Amount ( Excluding Fines )</th>
+                                    <th>Due Deadline</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for fine in fines %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{fine.fine_month}}</td>
+                                    <td>{{fine.total_amount}}</td>
+                                    <td>{{fine.fine_amount}}</td>
+                                    <td>{{fine.fine_deadline}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div id="profilecontent" class="container" style="display: none;">
+                <div class="row" id="userimage">
+                    <i class="far fa-user-circle"></i>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Name
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {{name}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Student Id
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {{student.student_id}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Email
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {{student.student_mail}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Course
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {{ student.course }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Year of Study
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {{student.yos}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Student Mobile Number
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {{cnum}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Parent Mobile No
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {{student.parent_mobile_number}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Date of Birth
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {{student.date_of_birth}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Gender
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {% if student.gender == "M" %}
+                        Male
+                        {% else %}
+                        Female
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Address
+                    </div>
+                    <div class="col-2">
+                        :
+                    </div>
+                    <div class="col-6">
+                        {{student.address}}
+                    </div>
+                </div>
+
+            </div>
+            <div id="roomcontent" class="container" style="display: none;">
+                {% if student.assigned_room == -1 %}
+                <form action="/HostelServices/assignroom" method="POST">
+                    {% csrf_token %}
+                    <h2>Room Selection</h2><br>
+                    <label>Floor No:</label><br>
+                    <div class="form-group">
+                        <input type="text" class="form-control disabled-input" name="floor" value="{{floor}}">
+                        <p classs="note">***Your floor number is automatically selected according to your year of study
+                        </p>
+                    </div>
+                    <div class="form-group room-icons row">
+                        {% for room in rooms %}
+                        {% if room.no_of_students_occupied >= room.capacity %}
+                        <div class="room col-sm-2">
+                            <input type="radio" id="{{room.room_id}}" class="room_radio_input" required disabled
+                                name="roomnumber" value="{{room.room_id}}">
+                            <label for="{{room.room_id}}"><span class="btn btn-disabled"><i
+                                        class="fas fa-home"></i></span></label>
+                            <span style="color: rgba(255,0,0,0.5);">Room {{room.room_id}}</span>
+                            <span style="color: rgba(255,0,0,0.5);">Capacity : {{room.capacity}}</span>
+                            <span style="color: rgba(255,0,0,0.5);">Occupied : {{room.no_of_students_occupied}}</span>
+                        </div>
+                        {% else %}
+                        <div class="room col-sm-2">
+                            <input type="radio" id="{{room.room_id}}" class="room_radio_input" required
+                                name="roomnumber" value="{{room.room_id}}">
+                            <label for="{{room.room_id}}"><span class="btn btn-success"><i
+                                        class="fas fa-home"></i></span></label>
+                            <span>Room {{room.room_id}}</span>
+                            <span>Capacity : {{room.capacity}}</span>
+                            <span>Occupied : {{room.no_of_students_occupied}}</span>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="form-group clearfix">
+                        <div class="float-left">
+                            <p>
+                                <span class="btn btn-success"><i class="fas fa-home"></i></span>
+                                <span class="btn btn-success">Available</span>
+                            </p>
+                            <p>
+                                <span type="button" class="btn btn-disabled"><i class="fas fa-home"></i></span>
+                                <span class="btn btn-disabled">Not Available</span>
+                            </p>
+                            <p>
+                                <span type="button" class="btn btn-secondary"><i class="fas fa-home"></i></span>
+                                <span class="btn btn-secondary">Selected</span>
+                            </p>
+                        </div>
+                        <div class="float-right">
+                            <button type="submit" class="btn btn-outline-secondary">Assign Room</button>
+                            <span class="selectedroom">Selected : ROOM1</span>
+                        </div>
+                    </div>
+                </form>
+                {% else %}
+                <h4>You have already selected your room , Your room number is <span
+                        style="color: coral;">{{student.assigned_room}}</span></h4>
+                {% endif %}
+            </div>
+            {% if student.assigned_room != -1 and hostel.month_name != '0' %}
+            <div id="billcontent" class="container" style="display: none;">
+                {% if not bills.payment_paid %}
+                <h2 class="text-justify text-secondary text-uppercase">Upload Your Bills</h2>
+                <form action="/HostelServices/upload_bill" style="width: 100%;" method="POST"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <p class="text-justify text-secondary text-uppercase font-weight-bold">Transaction ID</p>
+                        <input type="text" class="form-control" name="tid" placeholder="Enter your transaction number">
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm">
+                            <p class="text-justify text-secondary text-uppercase font-weight-bold">Paid Date</p>
+                            <input type="date" name="paid_date" class="form-control">
+                        </div>
+                        <div class="col-sm">
+                            <p class="text-justify text-secondary text-uppercase font-weight-bold">Registration Number
+                            </p>
+                            <input type="text" class="form-control" value="{{student.student_id}}" disabled>
+                        </div>
+                        <div class="col-sm">
+                            <p class="text-justify text-secondary text-uppercase font-weight-bold">Room Number</p>
+                            <input type="text" class="form-control" value="{{student.assigned_room}}" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm">
+                            <p class="text-justify text-secondary text-uppercase font-weight-bold">Floor Number</p>
+                            <input type="text" class="form-control" value="{{student.yos}}" disabled>
+                        </div>
+                        <div class="col-sm">
+                            <p class="text-justify text-secondary text-uppercase font-weight-bold">Hostel ID</p>
+                            <input type="text" class="form-control" value="{{student.hostel_id}}" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <p class="text-justify text-secondary text-uppercase font-weight-bold">Upload Screen Shot of
+                            Transaction Bill</p>
+                        <div class="custom-file mb-3">
+                            <input type="file" class="custom-file-input" id="customFile" name="billimage"
+                                accept="image/x-png,image/gif,image/jpeg,image/jpg">
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                        </div>
+                        <p class="text-justify text-danger font-weight-bold">Note : Only JPG / JPEG / PNG Images are
+                            Accepted</p>
+                    </div>
+                    <div class="form-group clearfix">
+                        <button type="submit" class="btn btn-outline-success float-right">UPLOAD BILL</button>
+                    </div>
+                </form>
+                {% elif bills.payment_accepted and bills.payment_paid %}
+                <h4>
+                    <p class="text-secondary">Your bill has been accepted by the Supervisor for this month, You can
+                        upload the new bill on next month</p>
+                </h4>
+                {% elif bills.payment_rejected and bills.payment_paid %}
+                <h4>
+                    <p class="text-secondary">Your bill has been rejected by the Supervisor for this month, You can
+                        upload the new bill on next month</p>
+                </h4>
+                {% else %}
+                <p class="text-justify text-secondary">You have uploaded bill for this month please wait until your
+                    supervisor accepts it</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            <div id="leavecontent" class="container" style="display: none;">
+                {% if leave != None %}
+                {% if leave.allow_new_leave %}
+                {% if leave.is_accepted or leave.is_rejected %}
+                <form action="/HostelServices/applyleave" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" class="form-control datepicker" name="sdate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" class="form-control datepicker" name="edate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Enter reason:</label>
+                        <textarea class="form-control" cols=10 rows="5" id="comment" name="reason"
+                            required></textarea><br />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-primary">Apply for leave</button>
+                    </div>
+                </form>
+                {% else %}
+                <p>You have already applied for leave and is waiting for supervisor permission</p>
+                <p>Once supervisor approved your previous leave you will be allowed to apply new leave</p>
+                {% endif %}
+                {% else %}
+                <p>You have already applied for leave and is waiting for comfirmation from supervisor </p>
+                <p>Once supervisor approved your previous leave you will be allowed to apply new leave</p>
+                {% endif %}
+                {% else %}
+                <form action="/HostelServices/applyleave" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" class="form-control datepicker" name="sdate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" class="form-control datepicker" name="edate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Enter reason:</label>
+                        <textarea class="form-control" cols=10 rows="5" id="comment" name="reason"
+                            required></textarea><br />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-primary">Apply for leave</button>
+                    </div>
+                </form>
+                {% endif %}
+
+                <br>
+                <h3>Previous Leave Applications</h3><br>
+                {% if leaveapplications|length > 0 %}
+                <table class="table table-bordered table-striped table-hover" style="text-align: center;">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Date Applied</th>
+                            <th>Start date</th>
+                            <th>End date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in leaveapplications %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{app.applied_date}}</td>
+                            <td>{{app.startdate}}</td>
+                            <td>{{app.enddate}}</td>
+                            <td>
+                                {% if app.is_accepted %}
+                                <span style="color:green;text-transform:uppercase">Accepted</span>
+                                {% elif app.is_rejected %}
+                                <span style="color:red;text-transform:uppercase">Rejected</span>
+                                {% else %}
+                                <span style="color:orange;text-transform:uppercase">WAITING</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
+            <div id="grievancecontent" class="container" style="display: none;">
+                {% if grievance != None %}
+                {% if grievance.is_accepted %}
+                {% if grievance.is_completed %}
+                <p>Your latest Grievance has been <span style="color: green">COMPLETED</span> by the supervisor</p>
+                <form action="/HostelServices/applygrievance" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label
+                            style="font-size: 20px;color:cadetblue;font-family:'Courier New', Courier, monospace">Enter
+                            Your Complaint:</label>
+                        <textarea class="form-control" cols=10 rows="5" name="complaint" required></textarea><br />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-primary">Submit Grievance</button>
+                    </div>
+                </form>
+                {% else %}
+                <p>Your latest Grievance has been <span style="color: green">ACCEPTED</span> by the supervisor</p>
+                <p>Once supervisor completed your Grievance you will be allowed to apply new Grievance</p>
+                <br>
+                {% endif %}
+                {% elif grievance.is_rejected %}
+                <p>Your latest Grievance has been <span style="color: red">REJECTED</span> by the supervisor</p>
+                <form action="/HostelServices/applygrievance" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label
+                            style="font-size: 20px;color:cadetblue;font-family:'Courier New', Courier, monospace">Enter
+                            Your Complaint:</label>
+                        <textarea class="form-control" cols=10 rows="5" name="complaint" required></textarea><br />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-primary">Submit Grievance</button>
+                    </div>
+                </form>
+                {% else %}
+                <p>You have already mentioned a Grievance and is waiting for supervisor permission</p>
+                <p>Once supervisor completed your Grievance you will be allowed to apply new Grievance</p>
+                <br>
+                {% endif %}
+                {% else %}
+                <form action="/HostelServices/applygrievance" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label
+                            style="font-size: 20px;color:cadetblue;font-family:'Courier New', Courier, monospace">Enter
+                            Your Complaint:</label>
+                        <textarea class="form-control" cols=10 rows="5" name="complaint" required></textarea><br />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-primary">Submit Grievance</button>
+                    </div>
+                </form>
+                {% endif %}
+
+                {% if grievanceapplications|length > 0 %}
+                <h3 style="color: cadetblue;text-transform:uppercase">Previous Grievances</h3><br>
+                <table class="table table-bordered table-hover table-striped" style="text-align: center;">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Applied Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in grievanceapplications %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{app.applied_date}}</td>
+                            <td>
+                                {% if app.is_completed %}
+                                <span style="color: green;">COMPLETED</span>
+                                {% elif app.is_accepted %}
+                                <span style="color: green;">ACCEPTED</span>
+                                {% elif app.is_rejected %}
+                                <span style="color:red">REJECTED</span>
+                                {% else %}
+                                <span style="color: orange;">WAITING</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#sidenavCollapse').on('click', function () {
+                $('#sidenav').toggleClass('active');
+            });
+            $(".custom-file-input").on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+            });
+            $(".room_radio_input").change(function () {
+                if (this.checked) {
+                    $('.selectedroom').html("selected : room" + this.value)
+                }
+            });
+        });
+
+        function display_content(a, b, c, d, e, f) {
+            document.getElementById(a).style.display = "flex";
+            document.getElementById(a).style.flexDirection = 'column';
+            document.getElementById(b).style.display = 'none';
+            document.getElementById(c).style.display = 'none';
+            document.getElementById(d).style.display = 'none';
+            document.getElementById(e).style.display = 'none';
+            document.getElementById(f).style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
